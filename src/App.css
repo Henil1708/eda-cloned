@@ -1,0 +1,294 @@
+.pagination-footer {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 30px;
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  z-index: 1000;
+  position: fixed;
+  bottom: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.power-consumption-form-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 18px 0;
+  width: 30%;
+  border: 1px solid #9591917b;
+  border-radius: 4px;
+}
+
+.power-consumption-form {
+  color: #fff;
+  text-align: center;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #fff;
+  background: transparent;
+  font-weight: 700;
+  padding: 6px 10px;
+  width: 50%;
+}
+
+.page {
+  margin-top: 80px;
+}
+
+.page-2-img {
+  margin-right: 24px;
+}
+
+/* Page-2 ellipse-form */
+.ellipse-form-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-width: 40%;
+  margin-top: 20px;
+}
+
+.ellipse-form {
+  height: 20px;
+  width: 20px;
+  margin-right: 8px;
+  position: absolute;
+  opacity: 0;
+  border: 1px solid #fff;
+}
+
+.ellipse-form-text {
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* page-3 */
+.page-3-img {
+  height: 250px;
+  width: 270px;
+}
+
+/* page-5 */
+.page-5-col {
+  padding: 0;
+}
+
+/* page-6 */
+.page-6 .page-6-img1 {
+  height: 300px;
+  width: 320px;
+}
+
+.page-6 .page-6-img2 {
+  height: 200px;
+  width: 220px;
+}
+
+/* page-7 */
+.page-7-text {
+  text-align: start;
+}
+
+.page-7-img {
+  height: 280px;
+  width: 220px;
+}
+
+/* page-8 */
+.page-8-img {
+  height: 240px;
+  width: 180px;
+}
+
+.page-8-text {
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* page-10 */
+.page-10-img {
+  height: 220px;
+  width: 220px;
+}
+
+/* page-11 */
+.page-11-img {
+  height: 220px;
+  width: 240px;
+}
+
+.options-text {
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  font-size: 36px;
+}
+
+@media screen and (min-width: 493px) {
+  .page-8-text {
+    width: 35%;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .page-3-img {
+    height: 200px;
+    width: 220px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .ellipse-form-section {
+    max-width: 75%;
+  }
+
+  .ellipse-form {
+    height: 18px;
+    width: 18px;
+  }
+
+  .page-5-col {
+    padding: 15px;
+  }
+
+  .page-6 .page-6-img1 {
+    height: 240px;
+    width: 260px;
+  }
+
+  .page-6 .page-6-text {
+    font-size: 14px;
+  }
+
+  .page-11-img {
+    height: 200px;
+    width: 220px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .page-11-img {
+    height: 180px;
+    width: 200px;
+  }
+
+  .power-consumption-form-section {
+    width: 60%;
+  }
+
+  .power-consumption-form {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .page-6 .page-6-img1 {
+    height: 200px;
+    width: 220px;
+  }
+
+  .page-7-text {
+    text-align: center;
+  }
+
+  .page-7-img {
+    height: 200px;
+    width: 140px;
+  }
+
+  .page-8-img {
+    height: 200px;
+    width: 150px;
+  }
+
+  .page-11-img {
+    height: 160px;
+    width: 180px;
+  }
+}
+
+@media screen and (max-width: 493px) {
+  .page-2-title {
+    font-size: 17px;
+  }
+
+  .page-2-img {
+    height: 32px;
+    width: 32px;
+    margin-right: 10px;
+  }
+
+  .ellipse-form-text {
+    font-size: 14px;
+  }
+
+  .page-3-img {
+    height: 180px;
+    width: 200px;
+  }
+
+  .page-6 .page-6-img1 {
+    height: 170px;
+    width: 190px;
+  }
+
+  .page-8-img {
+    height: 170px;
+    width: 120px;
+  }
+
+  .power-consumption-form-section {
+    width: 60%;
+  }
+
+  .power-consumption-form {
+    width: 50%;
+  }
+
+  .page-10-img {
+    height: 140px;
+    width: 140px;
+  }
+
+  .page-11-img {
+    height: 180px;
+    width: 140px;
+  }
+
+  .page-11-section .page-11-div2 {
+    width: 27%;
+  }
+}
+
+@media screen and (min-width: 493px) and (max-width: 508px) {
+  .page-2-title {
+    font-size: 22px;
+  }
+  .page-2-img {
+    height: 40px;
+    width: 40px;
+    margin-right: 16px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .options-text {
+    font-size: 20px !important;
+  }
+}
+
+@media screen and (max-width: 432px) {
+  .page-3-img {
+    height: 150px;
+    width: 170px;
+  }
+}

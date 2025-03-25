@@ -4,12 +4,24 @@ import Sidebar from "./Sidebar";
 import React from "react";
 import { jsPDF } from "jspdf";
 import "./styles.css";
-import { Box, Typography, Button, Modal, Fade } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Modal,
+  Fade,
+  useMediaQuery,
+  IconButton,
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import { setRoofArea, updateRoofPanels } from "../slice/formSlice";
 import { setBounds, setMapProportions } from "../slice/mapSlice";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 
-export default function Map({ currentPage }) {
+export default function Map() {
+  const isSmallScreen = useMediaQuery("(max-width: 768px)");
+  const [currentPage, setCurrentPage] = useState("search");
+  const [isExpanded, setIsExpanded] = useState(true);
   const [energyConsumption, setEnergyConsumption] = useState(900);
   const [canDrawPanels, setCanDrawPanels] = useState(false);
   const [resetDrawingState, setResetDrawingState] = useState(false);
@@ -980,28 +992,106 @@ export default function Map({ currentPage }) {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100%" }}>
-      <Sidebar
-        roofPanels={roofPanels}
-        solarPanelArea={solarPanelArea}
-        solarPanelEnergyOutput={solarPanelEnergyOutput}
-        energyConsumption={energyConsumption}
-        getRoofArea={getRoofArea}
-        downloadPDF={downloadPDF}
-        setHome={(position) => {
-          setHomePosition(position);
-          setHome(position);
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: isSmallScreen ? "column" : "row",
+        height: "100vh",
+        width: "100%",
+        background: "linear-gradient(135deg, #06242E 10%, #073845 100%)",
+        boxShadow: 4,
+      }}
+    >
+      <Box
+        sx={{
+          width: isSmallScreen ? "100%" : "35%",
+          order: isSmallScreen ? 2 : 1,
+          height: isSmallScreen
+            ? currentPage === "search"
+              ? "100vh"
+              : isExpanded
+              ? "60vh"
+              : "80px"
+            : "100vh",
+          height: isSmallScreen
+            ? currentPage === "search"
+              ? "100vh"
+              : isExpanded
+              ? "60vh"
+              : "80px"
+            : "100vh",
+          overflowY: "auto",
+          background: "linear-gradient(135deg, #06242E 10%, #073845 100%)",
         }}
-        homePosition={homePosition}
-        mapRef={mapRef}
-        setCanDrawPanels={setCanDrawPanels}
-        resetDrawingState={resetDrawingState}
-        setAreaType={setAreaType}
-        resetMapState={resetMapState}
-        currentPage={currentPage}
-        setMapMetaData={setMapMetaData}
-      />
-      <div style={{ width: "65%", height: "100vh", position: "relative" }}>
+      >
+        {currentPage === "config" && isSmallScreen && (
+          <IconButton
+            sx={{
+              position: "absolute",
+              bottom: isExpanded ? "54%" : "5px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "#073845",
+              color: "white",
+              borderRadius: "50%",
+              boxShadow: "0px 2px 10px rgba(0,0,0,0.2)",
+              height: "60px",
+              width: "60px",
+              zIndex: 99,
+            }}
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? (
+              <KeyboardArrowDown sx={{ fontSize: "2.5rem" }} />
+            ) : (
+              <KeyboardArrowUp sx={{ fontSize: "2.5rem" }} />
+            )}
+          </IconButton>
+        )}
+        <Sidebar
+          roofPanels={roofPanels}
+          solarPanelArea={solarPanelArea}
+          solarPanelEnergyOutput={solarPanelEnergyOutput}
+          energyConsumption={energyConsumption}
+          getRoofArea={getRoofArea}
+          downloadPDF={downloadPDF}
+          setHome={(position) => {
+            setHomePosition(position);
+            setHome(position);
+          }}
+          homePosition={homePosition}
+          mapRef={mapRef}
+          setCanDrawPanels={setCanDrawPanels}
+          resetDrawingState={resetDrawingState}
+          setAreaType={setAreaType}
+          resetMapState={resetMapState}
+          isExpanded={isExpanded}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          setMapMetaData={setMapMetaData}
+        />
+      </Box>
+
+      <Box
+        sx={{
+          width: isSmallScreen
+            ? currentPage === "search"
+              ? 0
+              : "100%"
+            : "65%",
+          height: isSmallScreen
+            ? currentPage === "search"
+              ? 0
+              : isExpanded
+              ? "40vh"
+              : "90vh"
+            : "100vh",
+          position: "relative",
+          order: isSmallScreen ? 1 : 2,
+          flexShrink: 0,
+          transition: "height 0.3s ease",
+        }}
+      >
         <GoogleMap
           id="map-container"
           zoom={zoom}
@@ -1053,7 +1143,7 @@ export default function Map({ currentPage }) {
 
           {home && <Marker position={home} />}
         </GoogleMap>
-      </div>
+      </Box>
 
       <Modal
         open={modalOpen}
@@ -1091,6 +1181,6 @@ export default function Map({ currentPage }) {
           </Box>
         </Fade>
       </Modal>
-    </div>
+    </Box>
   );
 }

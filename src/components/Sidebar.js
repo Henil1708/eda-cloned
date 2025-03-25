@@ -18,11 +18,13 @@ export default function Sidebar({
   setAreaType,
   resetMapState,
   setMapMetaData,
+  isExpanded,
+  currentPage,
+  setCurrentPage,
 }) {
   const [isDrawingEnabled, setIsDrawingEnabled] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedPanelIndex, setSelectedPanelIndex] = useState(null);
-  const [currentPage, setCurrentPage] = useState("search");
 
   const resetSidebarState = () => {
     setIsDrawingEnabled(true);
@@ -76,15 +78,7 @@ export default function Sidebar({
   }, [resetDrawingState]);
 
   return (
-    <Box
-      sx={{
-        width: "35%",
-        height: "100vh",
-        overflowY: "auto",
-        background: "linear-gradient(135deg, #06242E 10%, #073845 100%)",
-        boxShadow: 4,
-      }}
-    >
+    <>
       {currentPage === "search" ? (
         <SearchPage setHome={handleSetHome} reset={handleReset} />
       ) : (
@@ -154,6 +148,6 @@ export default function Sidebar({
           </Box>
         </Fade>
       </Modal>
-    </Box>
+    </>
   );
 }

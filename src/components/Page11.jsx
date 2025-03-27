@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import PaginationButtons from "../common/PaginationButtons";
 import { selectFormData } from "../slice/formSlice";
-
+import { Container, Row, Col, Image } from "react-bootstrap";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import {
@@ -306,7 +306,7 @@ const Page11 = () => {
         </div>
       </div>
 
-      <div className="page-11-section">
+      <div className="page-11-section page-11-section-not-mobile">
         <div className=" d-flex justify-content-between align-items-center mt-5">
           <div className="d-flex flex-column align-items-start">
             <div className="text-start">
@@ -422,6 +422,112 @@ const Page11 = () => {
           </div>
         </div>
       </div>
+
+      <Container className=" page-11-section-mobile">
+        <Row className="align-items-center text-white text-md-start text-center">
+          {/* Center Image */}
+          <Col
+            xs={12}
+            md={5}
+            className="d-flex justify-content-center order-1 order-md-2 mb-5"
+          >
+            <Image
+              className="page-11-img"
+              src={
+                formData.roofType === "Flachdatch"
+                  ? "assets/flatroof.svg"
+                  : formData.roofType === "Pultdatch"
+                  ? "assets/pentroof.svg"
+                  : formData.roofType === "Sattledach"
+                  ? "assets/saddleroof.svg"
+                  : formData.roofType === "Walmdach"
+                  ? "assets/hiproof.svg"
+                  : "assets/house.svg"
+              }
+              alt="house"
+              fluid
+            />
+          </Col>
+          {/* Left and Right columns combined into a single row on mobile */}
+          <Col xs={12} className="order-1 order-md-0">
+            <Row>
+              {/* Left Column */}
+              <Col xs={6} className="text-start">
+                <div>
+                  <p className="mb-0">53343</p>
+                  <p className="fw-bold">Standort</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.selectedHouseType}</p>
+                  <p className="fw-bold">Haustyp</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.totalConsumption} kWh/Jahr</p>
+                  <p className="fw-bold">Energieverbrauch</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.timeOfUse}</p>
+                  <p className="fw-bold">Nutzungsprofil</p>
+                </div>
+                <div>
+                  <p className="mb-0">
+                    {formData.chargingStation !== "Nicht Geplant" &&
+                    formData.heatPump !== "Nicht Geplant"
+                      ? "Ladestation, Wärmepumpe"
+                      : formData.chargingStation === "Nicht Geplant" &&
+                        formData.heatPump !== "Nicht Geplant"
+                      ? "Wärmepumpe"
+                      : formData.chargingStation !== "Nicht Geplant" &&
+                        formData.heatPump === "Nicht Geplant"
+                      ? "Ladestation"
+                      : "Kein Verbraucher"}
+                  </p>
+                  <p className="fw-bold">Zusätzliche Verbraucher</p>
+                </div>
+                <div>
+                  <p className="mb-0">180 m²</p>
+                  <p className="fw-bold">Dachfläche</p>
+                </div>
+              </Col>
+
+              {/* Right Column */}
+              <Col xs={6} className="text-start">
+                <div>
+                  <p className="mb-0">
+                    {(formData.roofArea * 0.092903).toFixed(2)} m²
+                  </p>
+                  <p className="fw-bold">Gesamte markierte Fläche</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.roofType}</p>
+                  <p className="fw-bold">Dachart</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.roofPitchAngle}</p>
+                  <p className="fw-bold">Neigungswinkel</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.roofMaterial}</p>
+                  <p className="fw-bold">Dachmaterial</p>
+                </div>
+                <div>
+                  <p className="mb-0">Nord</p>
+                  <p className="fw-bold">Ausrichtung</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.solarPanelOption}</p>
+                  <p className="fw-bold">Solarpanel</p>
+                </div>
+                <div>
+                  <p className="mb-0">{formData.installationTime}</p>
+                  <p className="fw-bold">Installationszeit</p>
+                </div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Container>
+
       <Button
         variant="contained"
         color="primary"
@@ -430,6 +536,7 @@ const Page11 = () => {
         style={{
           width: "fit-content",
           margin: "auto",
+          marginTop: "15px",
         }}
       >
         PDF herunterladen

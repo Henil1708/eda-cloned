@@ -122,9 +122,9 @@ input::-webkit-inner-spin-button {
 
 /* page-11 */
 .page-11-section {
-  max-width: 60%;
+  /* max-width: 60%; */
   margin: 0 auto;
-  width: 100%;
+  /* width: 100%; */
 }
 
 .page-11-img {
@@ -137,6 +137,14 @@ input::-webkit-inner-spin-button {
   font-weight: 700;
   text-align: center;
   font-size: 36px;
+}
+
+.page-11-section-not-mobile {
+  display: inherit;
+}
+
+.page-11-section-mobile {
+  display: none;
 }
 
 @media screen and (min-width: 493px) {
@@ -183,8 +191,8 @@ input::-webkit-inner-spin-button {
 
 @media screen and (max-width: 767px) {
   .page-11-img {
-    height: 180px;
-    width: 200px;
+    max-height: 200px;
+    max-width: 220px;
   }
 
   .power-consumption-form-section {
@@ -216,9 +224,17 @@ input::-webkit-inner-spin-button {
     width: 150px;
   }
 
-  .page-11-img {
+  /* .page-11-img {
     height: 160px;
     width: 180px;
+  } */
+
+  .page-11-section-not-mobile {
+    display: none;
+  }
+
+  .page-11-section-mobile {
+    display: flex;
   }
 }
 
@@ -265,10 +281,10 @@ input::-webkit-inner-spin-button {
     width: 140px;
   }
 
-  .page-11-img {
+  /* .page-11-img {
     height: 180px;
     width: 140px;
-  }
+  } */
 
   .page-11-section .page-11-div2 {
     max-width: 87%;

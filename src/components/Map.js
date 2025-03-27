@@ -1004,7 +1004,7 @@ export default function Map() {
     >
       <Box
         sx={{
-          width: isSmallScreen ? "100%" : "35%",
+          width: isSmallScreen ? "100%" : "550px",
           order: isSmallScreen ? 2 : 1,
           height: isSmallScreen
             ? currentPage === "search"
@@ -1078,7 +1078,7 @@ export default function Map() {
             ? currentPage === "search"
               ? 0
               : "100%"
-            : "65%",
+            : "calc(100% - 550px)",
           height: isSmallScreen
             ? currentPage === "search"
               ? 0

@@ -3,13 +3,13 @@ import Places from "./Places";
 
 export default function SearchPage({ setHome, reset }) {
   const handlePlaceSelected = (position) => {
-    reset(); 
+    reset();
     setHome(position);
   };
 
   return (
-    <Box sx={{ padding: 3, color: "#E2CAA2" }}>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
+    <Box sx={{ padding: 3, color: "#E2CAA2", fontFamily: "Inter" }}>
+      <Typography fontWeight="bold" sx={{ mb: 1 }}>
         SOLAR-KONFIGURATOR
       </Typography>
       <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>

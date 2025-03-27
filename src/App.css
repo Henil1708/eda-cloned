@@ -121,6 +121,12 @@ input::-webkit-inner-spin-button {
 }
 
 /* page-11 */
+.page-11-section {
+  max-width: 60%;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .page-11-img {
   height: 220px;
   width: 240px;
@@ -265,7 +271,7 @@ input::-webkit-inner-spin-button {
   }
 
   .page-11-section .page-11-div2 {
-    width: 27%;
+    max-width: 87%;
   }
 }
 
@@ -290,5 +296,10 @@ input::-webkit-inner-spin-button {
   .page-3-img {
     height: 150px;
     width: 170px;
+  }
+
+  .page-11-section {
+    max-width: 98%;
+    margin: 0 auto;
   }
 }

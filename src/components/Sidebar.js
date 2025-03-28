@@ -17,16 +17,15 @@ export default function Sidebar({
   resetDrawingState,
   setAreaType,
   resetMapState,
+  setMapMetaData,
   isExpanded,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
 }) {
   const [isDrawingEnabled, setIsDrawingEnabled] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedPanelIndex, setSelectedPanelIndex] = useState(null);
-  
 
-  
   const resetSidebarState = () => {
     setIsDrawingEnabled(true);
     setOpenModal(false);
@@ -78,8 +77,6 @@ export default function Sidebar({
     }
   }, [resetDrawingState]);
 
-
-
   return (
     <>
       {currentPage === "search" ? (
@@ -93,6 +90,7 @@ export default function Sidebar({
           getRoofArea={getRoofArea}
           downloadPDF={downloadPDF}
           setAreaType={setAreaType}
+          setMapMetaData={setMapMetaData}
           isDrawingEnabled={isDrawingEnabled}
           handleToggleDrawing={handleToggleDrawing}
           handleOpenModal={handleOpenModal}
@@ -126,7 +124,9 @@ export default function Sidebar({
               Löschung bestätigen
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Sind Sie sicher, dass Sie Panel {selectedPanelIndex !== null ? selectedPanelIndex + 1 : ""} löschen möchten?
+              Sind Sie sicher, dass Sie Panel{" "}
+              {selectedPanelIndex !== null ? selectedPanelIndex + 1 : ""}{" "}
+              löschen möchten?
             </Typography>
             <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
               <Button

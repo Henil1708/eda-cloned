@@ -1,9 +1,9 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
-import Sidebar from './Sidebar';
-import React from 'react';
-import { jsPDF } from 'jspdf';
-import './styles.css';
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { GoogleMap, Marker } from "@react-google-maps/api";
+import Sidebar from "./Sidebar";
+import React from "react";
+import { jsPDF } from "jspdf";
+import "./styles.css";
 import {
   Box,
   Typography,
@@ -12,26 +12,30 @@ import {
   Fade,
   useMediaQuery,
   IconButton,
-} from '@mui/material';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+} from "@mui/material";
+import { useDispatch } from "react-redux";
+import { setRoofArea, updateRoofPanels } from "../slice/formSlice";
+import { setBounds, setMapProportions } from "../slice/mapSlice";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 
 export default function Map() {
-  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const isSmallScreen = useMediaQuery("(max-width: 768px)");
+  const [currentPage, setCurrentPage] = useState("search");
   const [isExpanded, setIsExpanded] = useState(true);
-  const [currentPage, setCurrentPage] = useState('search');
   const [energyConsumption, setEnergyConsumption] = useState(900);
   const [canDrawPanels, setCanDrawPanels] = useState(false);
   const [resetDrawingState, setResetDrawingState] = useState(false);
   const [homePosition, setHomePosition] = useState(null);
-  const [areaType, setAreaType] = useState('Roof');
+  const [areaType, setAreaType] = useState("Roof");
   const solarPanelWidth = 3.5;
   const solarPanelHeight = 5;
   const solarPanelArea = solarPanelWidth * solarPanelHeight;
   const solarPanelEnergyOutput = 48;
+  const dispatch = useDispatch();
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleOpenModal = (message) => {
     setModalMessage(message);
@@ -40,11 +44,13 @@ export default function Map() {
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    setModalMessage('');
+    setModalMessage("");
   };
 
   const [zoom, setZoom] = useState(12);
   const [panelHovering, setPanelHovering] = useState();
+  const [draggedMarker, setDraggedMarker] = useState(null);
+  const [overlappingPoints, setOverlappingPoints] = useState({});
 
   const getSelectedAreaCenter = () => {
     if (boxPoints.length === 0) return null;
@@ -65,11 +71,11 @@ export default function Map() {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      console.log('Panel Data', data);
+      console.log("Panel Data", data);
       if (data?.properties?.parameter?.ALLSKY_SFC_SW_DWN?.ANN) {
         const annualIrradiance =
           data.properties.parameter.ALLSKY_SFC_SW_DWN.ANN;
-        if (typeof annualIrradiance === 'number' && !isNaN(annualIrradiance)) {
+        if (typeof annualIrradiance === "number" && !isNaN(annualIrradiance)) {
           const sunshineHours = (annualIrradiance * 365).toFixed(2);
           const co2Savings = (annualIrradiance * 365 * 0.4).toFixed(2);
           return {
@@ -80,7 +86,7 @@ export default function Map() {
       }
       return null;
     } catch (error) {
-      console.error('Error fetching NASA solar data:', error);
+      console.error("Error fetching NASA solar data:", error);
       return null;
     }
   };
@@ -103,12 +109,12 @@ export default function Map() {
   const options = useMemo(
     () => ({
       center: latLngLiteral,
-      mapId: '793ef8405dde11b1',
+      mapId: "793ef8405dde11b1",
       zoom: 6,
       disableDefaultUI: false,
       clickableIcons: false,
       mapTypeControl: false,
-      mapTypeId: 'hybrid',
+      mapTypeId: "hybrid",
       tilt: 0,
       draggableCursor:
         "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><circle cx='12' cy='12' r='4' fill='%2300FFFF' stroke='%23000000' stroke-width='2'/></svg>\") 12 12, auto",
@@ -118,16 +124,26 @@ export default function Map() {
 
   const onLoad = useCallback((map) => (mapRef.current = map), []);
 
-  const sniperPointSvg = `
-    <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="3" cy="3" r="2.5" stroke="#FF0000" stroke-width="1" fill="none" />
-        <line x1="3" y1="0" x2="3" y2="6" stroke="#FF0000" stroke-width="1" />
-        <line x1="0" y1="3" x2="6" y2="3" stroke="#FF0000" stroke-width="1" />
-        <circle cx="3" cy="3" r="0.8" fill="#FF0000"/>
-    </svg>`;
 
-  const dotIcon = {
-    url: `data:image/svg+xml,${encodeURIComponent(sniperPointSvg)}`,
+  const whiteCircleSvg = `
+  <svg width="6" height="6" viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="3" cy="3" r="2.5" fill="#FFFFFF" stroke="#000000" stroke-width="0.5" />
+  </svg>`;
+
+  const greenCircleSvg = `
+  <svg width="6" height="6" viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="3" cy="3" r="2.5" fill="#00FF00" stroke="#000000" stroke-width="0.5" />
+  </svg>`;
+
+  const whiteDotIcon = {
+    url: `data:image/svg+xml,${encodeURIComponent(whiteCircleSvg)}`,
+    scaledSize: new window.google.maps.Size(10, 10),
+    origin: new window.google.maps.Point(0, 0),
+    anchor: new window.google.maps.Point(5, 5),
+  };
+
+  const greenDotIcon = {
+    url: `data:image/svg+xml,${encodeURIComponent(greenCircleSvg)}`,
     scaledSize: new window.google.maps.Size(10, 10),
     origin: new window.google.maps.Point(0, 0),
     anchor: new window.google.maps.Point(5, 5),
@@ -140,10 +156,10 @@ export default function Map() {
     return new Promise((resolve) => {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === 'OK' && results[0]) {
+        if (status === "OK" && results[0]) {
           resolve(results[0].types);
         } else {
-          resolve(['Geocoding Failed']);
+          resolve(["Geocoding Failed"]);
         }
       });
     });
@@ -153,77 +169,77 @@ export default function Map() {
     return new Promise((resolve) => {
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === 'OK' && results[0]) {
+        if (status === "OK" && results[0]) {
           const types = results[0].types;
           const roofTypes = [
-            'premise',
-            'building',
-            'roof',
-            'street_address',
-            'sublocality',
-            'locality',
-            'neighborhood',
-            'postal_code',
-            'store',
-            'car_repair',
+            "premise",
+            "building",
+            "roof",
+            "street_address",
+            "sublocality",
+            "locality",
+            "neighborhood",
+            "postal_code",
+            "store",
+            "car_repair",
           ];
 
           const openAreaTypes = [
-            'park',
-            'natural_feature',
-            'forest',
-            'grassland',
-            'field',
-            'meadow',
-            'tourist_attraction',
-            'route',
+            "park",
+            "natural_feature",
+            "forest",
+            "grassland",
+            "field",
+            "meadow",
+            "tourist_attraction",
+            "route",
           ];
 
           if (
             types.length === 2 &&
-            types.includes('establishment') &&
-            types.includes('point_of_interest')
+            types.includes("establishment") &&
+            types.includes("point_of_interest")
           ) {
-            resolve('Roof');
+            resolve("Roof");
           } else if (
             types.length > 2 &&
-            types.includes('establishment') &&
-            types.includes('point_of_interest')
+            types.includes("establishment") &&
+            types.includes("point_of_interest")
           ) {
             const additionalTypes = types.filter(
-              (type) => type !== 'establishment' && type !== 'point_of_interest'
+              (type) => type !== "establishment" && type !== "point_of_interest"
             );
             if (roofTypes.some((type) => additionalTypes.includes(type))) {
-              resolve('Roof');
+              resolve("Roof");
             } else if (
               openAreaTypes.some((type) => additionalTypes.includes(type))
             ) {
-              resolve('Open Area');
+              resolve("Open Area");
             } else {
-              resolve('Roof');
+              resolve("Roof");
             }
           } else {
             if (roofTypes.some((type) => types.includes(type))) {
-              resolve('Roof');
+              resolve("Roof");
             } else if (openAreaTypes.some((type) => types.includes(type))) {
-              resolve('Open Area');
+              resolve("Open Area");
             } else {
               // Fallback to address components if no direct match
               const components = results[0].address_components;
               const hasInfrastructure = components.some((comp) =>
-                ['street_number', 'route', 'premise', 'building'].includes(
+                ["street_number", "route", "premise", "building"].includes(
                   comp.types[0]
                 )
               );
               if (hasInfrastructure) {
-                resolve('Roof');
+                resolve("Roof");
               } else {
-                resolve('Open Area');
+                resolve("Open Area");
               }
             }
           }
         } else {
-          resolve('Roof');
+          resolve("Roof");
         }
       });
     });
@@ -233,7 +249,7 @@ export default function Map() {
     if (!homePosition) {
       return;
     }
-    if (currentPage === 'config' && roofPanels.length > 0 && !canDrawPanels) {
+    if (currentPage === "config" && roofPanels.length > 0 && !canDrawPanels) {
       return;
     }
     if (!canDrawPanels) {
@@ -242,28 +258,28 @@ export default function Map() {
 
     const locationType = await checkLocationType(coordinates);
     console.log(
-      'Geocoding Types for Clicked Location:',
+      "Geocoding Types for Clicked Location:",
       await getGeocodingTypes(coordinates)
     ); // Log the raw types
-    console.log('Determined Location Type:', locationType);
+    console.log("Determined Location Type:", locationType);
 
     if (
-      (areaType === 'Roof' && locationType !== 'Roof') ||
-      (areaType === 'Open Area' && locationType !== 'Open Area') ||
-      (areaType !== 'Both' && locationType === 'Unknown')
+      (areaType === "Roof" && locationType !== "Roof") ||
+      (areaType === "Open Area" && locationType !== "Open Area") ||
+      (areaType !== "Both" && locationType === "Unknown")
     ) {
       let areaTypeGerman =
-        areaType === 'Roof'
-          ? 'Dachfläche'
-          : areaType === 'Open Area'
-          ? 'Freifläche'
-          : areaType.toLowerCase();
+        areaType === "Roof"
+          ? "Dachfläche"
+          : areaType === "Open Area"
+            ? "Freifläche"
+            : areaType.toLowerCase();
       let locationTypeGerman =
-        locationType === 'Roof'
-          ? 'Dachfläche'
-          : locationType === 'Open Area'
-          ? 'Freifläche'
-          : 'Unbekannt';
+        locationType === "Roof"
+          ? "Dachfläche"
+          : locationType === "Open Area"
+            ? "Freifläche"
+            : "Unbekannt";
       handleOpenModal(
         `Bitte wählen Sie eine ${areaTypeGerman}-Fläche aus. Die aktuelle Auswahl ist ${locationTypeGerman}.`
       );
@@ -285,7 +301,7 @@ export default function Map() {
       const newPolyline = new window.google.maps.Polyline({
         path: boxPoints,
         geodesic: false,
-        strokeColor: '#FF0000',
+        strokeColor: "#FF0000",
         strokeWeight: 1,
       });
       newPolyline.setMap(mapRef.current);
@@ -310,7 +326,7 @@ export default function Map() {
   function drawPoint(points) {
     const point = new window.google.maps.Marker({
       position: points,
-      icon: dotIcon,
+      icon: whiteDotIcon,
     });
     point.setMap(mapRef.current);
   }
@@ -334,17 +350,17 @@ export default function Map() {
         fillOpacity: 0.35,
       });
       panel.setMap(mapRef.current);
-      panel.addListener('mouseover', () => {
+      panel.addListener("mouseover", () => {
         setPanelHovering(index);
       });
-      panel.addListener('mouseout', () => {
+      panel.addListener("mouseout", () => {
         setPanelHovering(undefined);
       });
 
       const polyline = new window.google.maps.Polyline({
         path: [...points, points[0]], // Close the loop
         geodesic: false,
-        strokeColor: '#000000',
+        strokeColor: "#000000",
         strokeWeight: 1,
       });
       polyline.setMap(mapRef.current);
@@ -356,13 +372,13 @@ export default function Map() {
         map: mapRef.current,
         label: {
           text: `${index + 1}`,
-          color: 'black',
-          fontSize: '14px',
-          fontWeight: 'bold',
+          color: "black",
+          fontSize: "14px",
+          fontWeight: "bold",
         },
         icon: {
           url:
-            'data:image/svg+xml;charset=UTF-8,' +
+            "data:image/svg+xml;charset=UTF-8," +
             encodeURIComponent('<svg width="0" height="0"></svg>'),
           scaledSize: new window.google.maps.Size(0, 0),
         },
@@ -415,7 +431,7 @@ export default function Map() {
       );
       let panelStep = Math.abs(
         (solarPanelHeight * 0.3048) /
-          Math.cos((180 - Math.abs(maxLineHeading)) * (Math.PI / 180))
+        Math.cos((180 - Math.abs(maxLineHeading)) * (Math.PI / 180))
       );
 
       let currPoint = northMost;
@@ -470,7 +486,7 @@ export default function Map() {
     getLngOnLine(startPoint, endPoint, targetLat) {
       return (
         (targetLat - startPoint.lat) *
-          ((endPoint.lng - startPoint.lng) / (endPoint.lat - startPoint.lat)) +
+        ((endPoint.lng - startPoint.lng) / (endPoint.lat - startPoint.lat)) +
         startPoint.lng
       );
     }
@@ -521,19 +537,19 @@ export default function Map() {
           if (fullyWithinRoofPanelWest) {
             let newSolarPanel = new window.google.maps.Polygon({
               paths: solarPanelVerteciesWest,
-              strokeColor: '#00FF00',
+              strokeColor: "#00FF00",
               strokeOpacity: 0.8,
               strokeWeight: 2,
-              fillColor: '#00FF00',
+              fillColor: "#00FF00",
               fillOpacity: 0.35,
             });
-            newSolarPanel.addListener('click', () => {
+            newSolarPanel.addListener("click", () => {
               this.delete();
             });
-            newSolarPanel.addListener('mouseover', () => {
+            newSolarPanel.addListener("mouseover", () => {
               setPanelHovering(this.index);
             });
-            newSolarPanel.addListener('mouseout', () => {
+            newSolarPanel.addListener("mouseout", () => {
               setPanelHovering(undefined);
             });
             this.solarPanels.push(newSolarPanel);
@@ -590,19 +606,19 @@ export default function Map() {
           if (fullyWithinRoofPanelEast) {
             let newSolarPanel = new window.google.maps.Polygon({
               paths: solarPanelVerteciesEast,
-              strokeColor: '#00FF00',
+              strokeColor: "#00FF00",
               strokeOpacity: 0.8,
               strokeWeight: 2,
-              fillColor: '#00FF00',
+              fillColor: "#00FF00",
               fillOpacity: 0.35,
             });
-            newSolarPanel.addListener('click', () => {
+            newSolarPanel.addListener("click", () => {
               this.delete();
             });
-            newSolarPanel.addListener('mouseover', () => {
+            newSolarPanel.addListener("mouseover", () => {
               setPanelHovering(this.index);
             });
-            newSolarPanel.addListener('mouseout', () => {
+            newSolarPanel.addListener("mouseout", () => {
               setPanelHovering(undefined);
             });
             this.solarPanels.push(newSolarPanel);
@@ -621,15 +637,15 @@ export default function Map() {
     }
     getFillColor(sunshineHours) {
       if (sunshineHours < 500) {
-        return '#FFFFFF';
+        return "#FFFFFF";
       } else if (sunshineHours < 1000) {
-        return '#FFD700';
+        return "#FFD700";
       } else if (sunshineHours < 1500) {
-        return '#FFA500';
+        return "#FFA500";
       } else if (sunshineHours < 2000) {
-        return '#FF0000';
+        return "#FF0000";
       } else {
-        return '#8B0000';
+        return "#8B0000";
       }
     }
 
@@ -679,14 +695,14 @@ export default function Map() {
           map: mapRef.current,
           label: {
             text: `${Math.round(length)} m`,
-            color: 'white',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            className: 'custom-label',
+            color: "white",
+            fontSize: "12px",
+            fontWeight: "bold",
+            className: "custom-label",
           },
           icon: {
             url:
-              'data:image/svg+xml;charset=UTF-8,' +
+              "data:image/svg+xml;charset=UTF-8," +
               encodeURIComponent('<svg width="0" height="0"></svg>'),
             scaledSize: new window.google.maps.Size(0, 0),
           },
@@ -752,7 +768,7 @@ export default function Map() {
   let addRoofSegmment = async (points) => {
     if (!homePosition) {
       handleOpenModal(
-        'Bitte suchen Sie im Seitenbereich nach einem Standort, bevor Sie Dachsegmente hinzufügen.'
+        "Bitte suchen Sie im Seitenbereich nach einem Standort, bevor Sie Dachsegmente hinzufügen."
       );
       return;
     }
@@ -784,13 +800,46 @@ export default function Map() {
     return area;
   };
 
+  const setMapMetaData = () => {
+    const input = document.getElementById("map-container");
+    const mapBounds = mapRef.current.getBounds();
+    const ne = mapBounds.getNorthEast();
+    const sw = mapBounds.getSouthWest();
+    dispatch(
+      setMapProportions({
+        clientWidth: input.clientWidth,
+        clientHeight: input.clientHeight,
+      })
+    );
+    dispatch(
+      setBounds({
+        northEast: {
+          lat: ne.lat(),
+          lng: ne.lng(),
+        },
+        southWest: {
+          lat: sw.lat(),
+          lng: sw.lng(),
+        },
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (roofPanels.length > 0) {
+      const roofArea = getRoofArea();
+      dispatch(setRoofArea(roofArea));
+    }
+    dispatch(updateRoofPanels(roofPanels));
+  }, [roofPanels]);
+
   const downloadPDF = (panelIndex) => {
-    const input = document.getElementById('map-container');
+    const input = document.getElementById("map-container");
     if (input && roofPanels.length > panelIndex) {
       const panel = roofPanels[panelIndex];
 
-      const sketchCanvas = document.createElement('canvas');
-      const sketchCtx = sketchCanvas.getContext('2d');
+      const sketchCanvas = document.createElement("canvas");
+      const sketchCtx = sketchCanvas.getContext("2d");
 
       sketchCanvas.width = input.clientWidth;
       sketchCanvas.height = input.clientHeight;
@@ -837,19 +886,19 @@ export default function Map() {
         }
       });
       sketchCtx.closePath();
-      sketchCtx.fillStyle = 'rgba(0, 0, 255, 0.4)';
-      sketchCtx.strokeStyle = 'rgba(0, 0, 255, 1)';
+      sketchCtx.fillStyle = "rgba(0, 0, 255, 0.4)";
+      sketchCtx.strokeStyle = "rgba(0, 0, 255, 1)";
       sketchCtx.lineWidth = 2;
       sketchCtx.fill();
       sketchCtx.stroke();
-      const sketchImg = sketchCanvas.toDataURL('image/png');
-      const pdf = new jsPDF('l', 'pt', [
+      const sketchImg = sketchCanvas.toDataURL("image/png");
+      const pdf = new jsPDF("l", "pt", [
         sketchCanvas.width,
         sketchCanvas.height,
       ]);
       pdf.addImage(
         sketchImg,
-        'PNG',
+        "PNG",
         0,
         0,
         sketchCanvas.width,
@@ -896,8 +945,8 @@ export default function Map() {
           pdf.setTextColor(255, 255, 255);
           pdf.setDrawColor(0);
           pdf.setFillColor(0, 0, 0);
-          pdf.rect(pdfX - 10, pdfY - 10, 20, 20, 'F');
-          pdf.text(text, pdfX, pdfY, { align: 'center', baseline: 'middle' });
+          pdf.rect(pdfX - 10, pdfY - 10, 20, 20, "F");
+          pdf.text(text, pdfX, pdfY, { align: "center", baseline: "middle" });
         }
       });
       pdf.save(`solar_panel_layout_panel_${panelIndex + 1}.pdf`);
@@ -908,24 +957,95 @@ export default function Map() {
     }
   };
 
-  const handleMarkerDrag = (
-    index,
-    panelIndex,
-    newPosition,
-    isDragging = false
-  ) => {
+  const handleMarkerDrag = (index, panelIndex, newPosition, isDragging = false) => {
     const updatedPanels = [...roofPanels];
     const panel = updatedPanels[panelIndex];
     if (!panel.isDeleted) {
       const newPoints = [...panel.points];
       newPoints[index] = newPosition;
       panel.updatePoints(newPoints, !isDragging);
-      if (!isDragging) {
+
+      // Check if this point was previously overlapped by another point
+      const currentKey = `${panelIndex}-${index}`;
+      const prevOverlapping = Object.entries(overlappingPoints).find(
+        ([_, overlap]) => overlap.overlappedPanelIdx === panelIndex && overlap.overlappedPointIdx === index
+      );
+
+      if (isDragging) {
+        // Check for new overlaps caused by dragging this point
+        const overlapInfo = checkGlobalOverlap(newPosition, panelIndex, index);
+        setOverlappingPoints((prev) => {
+          const newOverlaps = { ...prev };
+
+          // Update overlap for the dragged point
+          if (overlapInfo) {
+            newOverlaps[currentKey] = {
+              overlappedPanelIdx: overlapInfo.panelIndex,
+              overlappedPointIdx: overlapInfo.pointIndex,
+            };
+          } else {
+            delete newOverlaps[currentKey];
+          }
+
+          // Check if moving this point breaks an existing overlap
+          if (prevOverlapping) {
+            const [overlappingKey] = prevOverlapping;
+            const overlappingPos = roofPanels[overlappingKey.split("-")[0]].points[overlappingKey.split("-")[1]];
+            if (!isOverlapping(newPosition, overlappingPos)) {
+              delete newOverlaps[overlappingKey];
+            }
+          }
+
+          return newOverlaps;
+        });
+      } else {
+        // Finalize after drag ends
         setRoofPanels(updatedPanels);
+        const overlapInfo = checkGlobalOverlap(newPosition, panelIndex, index);
+        setOverlappingPoints((prev) => {
+          const newOverlaps = { ...prev };
+
+          // Update overlap for the dragged point
+          if (overlapInfo) {
+            newOverlaps[currentKey] = {
+              overlappedPanelIdx: overlapInfo.panelIndex,
+              overlappedPointIdx: overlapInfo.pointIndex,
+            };
+          } else {
+            delete newOverlaps[currentKey];
+          }
+
+          // Check if moving this point breaks an existing overlap
+          if (prevOverlapping) {
+            const [overlappingKey] = prevOverlapping;
+            const overlappingPos = roofPanels[overlappingKey.split("-")[0]].points[overlappingKey.split("-")[1]];
+            if (!isOverlapping(newPosition, overlappingPos)) {
+              delete newOverlaps[overlappingKey];
+            }
+          }
+
+          return newOverlaps;
+        });
       }
     }
   };
 
+  const isOverlapping = (pos1, pos2) => {
+    const threshold = 0.000009; // Adjust based on zoom level
+    return Math.abs(pos1.lat - pos2.lat) < threshold && Math.abs(pos1.lng - pos2.lng) < threshold;
+  };
+
+  const checkGlobalOverlap = (draggedPos, draggedPanelIndex, draggedIndex) => {
+    for (let pIdx = 0; pIdx < roofPanels.length; pIdx++) {
+      if (roofPanels[pIdx].isDeleted || pIdx === draggedPanelIndex) continue; // Skip deleted panels and the dragged panel
+      for (let ptIdx = 0; ptIdx < roofPanels[pIdx].points.length; ptIdx++) {
+        if (isOverlapping(draggedPos, roofPanels[pIdx].points[ptIdx])) {
+          return { panelIndex: pIdx, pointIndex: ptIdx };
+        }
+      }
+    }
+    return null;
+  };
   const resetMapState = () => {
     // Clear all existing map objects
     roofPanels.forEach((panel) => {
@@ -942,7 +1062,6 @@ export default function Map() {
       currPolyline.current.setMap(null);
     }
 
-    // Reset all state
     setRoofPanels([]);
     setBoxPoints([]);
     setDeletedPanels([]);
@@ -951,40 +1070,42 @@ export default function Map() {
     setHomePosition(null);
     setHome(null);
     setZoom(12);
+    setDraggedMarker(null);
+    setOverlappingPoints({});
     setTimeout(() => setResetDrawingState(false), 0);
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: isSmallScreen ? 'column' : 'row',
-        height: '100vh',
-        width: '100%',
-        background: 'linear-gradient(135deg, #06242E 10%, #073845 100%)',
+        display: "flex",
+        flexDirection: isSmallScreen ? "column" : "row",
+        height: "100vh",
+        width: "100%",
+        background: "linear-gradient(135deg, #06242E 10%, #073845 100%)",
         boxShadow: 4,
       }}
     >
       <Box
         sx={{
-          width: isSmallScreen ? '100%' : '35%',
+          width: isSmallScreen ? "100%" : "550px",
           order: isSmallScreen ? 2 : 1,
           height: isSmallScreen
-            ? currentPage === 'search'
-              ? '100vh'
+            ? currentPage === "search"
+              ? "100vh"
               : isExpanded
-              ? '60vh'
-              : '80px'
-            : '100vh',
+                ? "60vh"
+                : "80px"
+            : "100vh",
           height: isSmallScreen
-            ? currentPage === 'search'
-              ? '100vh'
+            ? currentPage === "search"
+              ? "100vh"
               : isExpanded
-              ? '60vh'
-              : '80px'
-            : '100vh',
-          overflowY: 'auto',
-          background: 'linear-gradient(135deg, #06242E 10%, #073845 100%)',
+                ? "60vh"
+                : "80px"
+            : "100vh",
+          overflowY: "auto",
+          background: "linear-gradient(135deg, #06242E 10%, #073845 100%)",
         }}
       >
         {currentPage === 'config' && isSmallScreen && (
@@ -1029,7 +1150,7 @@ export default function Map() {
             </Box>
           </Box>
         )}
-
+        
         <Sidebar
           roofPanels={roofPanels}
           solarPanelArea={solarPanelArea}
@@ -1050,33 +1171,35 @@ export default function Map() {
           isExpanded={isExpanded}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          setMapMetaData={setMapMetaData}
         />
       </Box>
+
       <Box
         sx={{
           width: isSmallScreen
-            ? currentPage === 'search'
+            ? currentPage === "search"
               ? 0
-              : '100%'
-            : '65%',
+              : "100%"
+            : "calc(100% - 550px)",
           height: isSmallScreen
-            ? currentPage === 'search'
+            ? currentPage === "search"
               ? 0
               : isExpanded
-              ? '40vh'
-              : '90vh'
-            : '100vh',
-          position: 'relative',
+                ? "40vh"
+                : "90vh"
+            : "100vh",
+          position: "relative",
           order: isSmallScreen ? 1 : 2,
           flexShrink: 0,
-          transition: 'height 0.3s ease',
+          transition: "height 0.3s ease",
         }}
       >
         <GoogleMap
-          id='map-container'
+          id="map-container"
           zoom={zoom}
           center={homePosition || center}
-          mapContainerStyle={{ width: '100%', height: '100%' }}
+          mapContainerStyle={{ width: "100%", height: "100%" }}
           options={options}
           onLoad={onLoad}
           onClick={(e) => addBoxPoint(e.latLng?.toJSON())}
@@ -1085,7 +1208,7 @@ export default function Map() {
             <Marker
               key={index}
               position={coordinates}
-              icon={dotIcon}
+              icon={whiteDotIcon}
               draggable={false}
               onClick={() => {
                 if (index === 0 && boxPoints.length >= 3) {
@@ -1095,64 +1218,71 @@ export default function Map() {
             />
           ))}
 
-          {roofPanels.map(
-            (panel, panelIndex) =>
-              !panel.isDeleted &&
-              panel.points.map((coordinates, index) => (
+          {roofPanels.map((panel, panelIndex) =>
+            !panel.isDeleted &&
+            panel.points.map((coordinates, index) => {
+              const isOverlappingPoint = !!overlappingPoints[`${panelIndex}-${index}`];
+
+              return (
                 <Marker
                   key={`${panelIndex}-${index}`}
                   position={coordinates}
-                  icon={dotIcon}
+                  icon={isOverlappingPoint ? greenDotIcon : whiteDotIcon}
                   draggable={true}
+                  onDragStart={() => {
+                    setDraggedMarker({ panelIndex, index, position: coordinates });
+                  }}
                   onDrag={(e) => {
                     const newPosition = e.latLng.toJSON();
+                    setDraggedMarker({ panelIndex, index, position: newPosition });
                     handleMarkerDrag(index, panelIndex, newPosition, true);
                   }}
                   onDragEnd={(e) => {
                     const newPosition = e.latLng.toJSON();
                     handleMarkerDrag(index, panelIndex, newPosition, false);
+                    setDraggedMarker(null);
                   }}
                   onClick={() => {
-                    handleOpenModal(
-                      'Dieser Punkt ist verschiebbar. Um einen neuen Punkt hinzuzufügen, klicken Sie an eine andere Stelle auf der Karte.'
-                    );
+                    handleOpenModal("Dieser Punkt ist verschiebbar. Um einen neuen Punkt hinzuzufügen, klicken Sie an eine andere Stelle auf der Karte.");
                   }}
                 />
-              ))
+              );
+            })
           )}
 
           {home && <Marker position={home} />}
         </GoogleMap>
       </Box>
+
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}
         closeAfterTransition
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
         <Fade in={modalOpen}>
           <Box
             sx={{
-              backgroundColor: '#073845',
+              backgroundColor: "#073845",
               borderRadius: 1,
               padding: 3,
               boxShadow: 24,
               minWidth: 300,
-              color: '#E2CAA2',
+              color: "#E2CAA2",
             }}
           >
-            <Typography variant='h6' gutterBottom>
+            <Typography variant="h6" gutterBottom>
               Warnung
             </Typography>
-            <Typography variant='body1' gutterBottom>
+            <Typography variant="body1" gutterBottom>
               {modalMessage}
             </Typography>
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
               <Button
-                variant='outlined'
-                color='inherit'
+                variant="outlined"
+                color="inherit"
                 onClick={handleCloseModal}
-                sx={{ color: '#E2CAA2', borderColor: '#E2CAA2' }}
+                sx={{ color: "#E2CAA2", borderColor: "#E2CAA2" }}
               >
                 OK
               </Button>

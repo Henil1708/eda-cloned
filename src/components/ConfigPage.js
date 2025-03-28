@@ -25,6 +25,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from 'react-router-dom';
 
 export default function ConfigPage({
   roofPanels,
@@ -38,9 +39,11 @@ export default function ConfigPage({
   handleToggleDrawing,
   handleOpenModal,
   setCurrentPage,
+  setMapMetaData,
 }) {
   const [areaType, setLocalAreaType] = useState('Dachfläche');
   const [selectedConcepts, setSelectedConcepts] = useState([]);
+  const navigate = useNavigate();
 
   const handleAreaTypeChange = (event) => {
     const newAreaTypeGerman = event.target.value;
@@ -77,7 +80,12 @@ export default function ConfigPage({
     setCurrentPage('search');
   };
 
-  const tableCellStyle = { color: '#E2CAA2' };
+  const handleNext = () => {
+    setMapMetaData();
+    navigate('/page1');
+  };
+
+  const tableCellStyle = { color: '#E2CAA2', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }};
 
   return (
     <Box sx={{ padding: 3, color: '#E2CAA2' }}>
@@ -103,26 +111,20 @@ export default function ConfigPage({
         <br />
         Flächen
       </Typography>
-      <Typography
-        variant='body2'
-        sx={{
+      <Typography variant='body2' sx={{
           mb: 2,
           fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
-        }}
-      >
+        }}>
         Klicken Sie mit der Maus auf die Eckpunkte Ihrer Dach- oder Freifläche.
         Mit einem Klick auf den zuerst gesetzten Punkt, können Sie die Fläche
         abschließen. Alle Angaben können auch nachträglich verändert werden.
       </Typography>
-      <Typography
-        variant='h6'
-        sx={{
+      <Typography variant='h6' sx={{
           color: '#E2CAA2',
           mt: 3,
           mb: 1,
           fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
-        }}
-      >
+        }}>
         Flächenart :
       </Typography>
       <FormControl sx={{ minWidth: '100%' }}>
@@ -140,15 +142,12 @@ export default function ConfigPage({
           <MenuItem value='Dach- und Freifläche'>Dach- und Freifläche</MenuItem>
         </Select>
       </FormControl>
-      <Typography
-        variant='h6'
-        sx={{
+      <Typography variant='h6' sx={{
           color: '#E2CAA2',
           mt: 3,
           mb: 1,
           fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
-        }}
-      >
+        }}>
         An welchen Konzepten sind Sie interessiert?*
       </Typography>
       <Box>
@@ -171,10 +170,7 @@ export default function ConfigPage({
                 />
               }
               label='Schlüsselfertige Eigenanlage (Dach)'
-              sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
-              }}
+              sx={{ color: '#E2CAA2' }}
             />
             <FormControlLabel
               control={
@@ -280,7 +276,6 @@ export default function ConfigPage({
                   sx={{
                     color: '#E2CAA2',
                     '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
                   }}
                 />
               }
@@ -392,14 +387,9 @@ export default function ConfigPage({
             mb: 2,
           }}
         >
-          <Typography
-            variant='h6'
-            sx={{
+          <Typography variant='h6'  sx={{
               fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' }, // Adjust font size for small screens
-            }}
-          >
-            Ihre markierte Flächen
-          </Typography>
+            }}>Ihre markierte Flächen</Typography>
           <Button
             variant='outlined'
             color='inherit'
@@ -415,14 +405,7 @@ export default function ConfigPage({
             Neue Fläche hinzufügen
           </Button>
         </Box>
-        <Typography
-          variant='body2'
-          sx={{
-            color: '#E2CAA2',
-            mb: 2,
-            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-          }}
-        >
+        <Typography variant='body2' sx={{ color: '#E2CAA2', mb: 2 }}>
           {areaType === 'Dachfläche' &&
             'Zeichnen Sie Polygone über die süd-, ost- und westlichen Abschnitte Ihres Daches.'}
           {areaType === 'Freifläche' &&
@@ -443,14 +426,9 @@ export default function ConfigPage({
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon sx={{ color: '#E2CAA2' }} />}
                 >
-                  <Typography
-                    fontWeight='bold'
-                    sx={{
+                  <Typography fontWeight='bold' sx={{
                       fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' }, // Adjust font size for small screens
-                    }}
-                  >
-                    Panel {index + 1}
-                  </Typography>
+                    }}>Panel {index + 1}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <TableContainer
@@ -460,108 +438,32 @@ export default function ConfigPage({
                     <Table sx={{ minWidth: 250 }}>
                       <TableHead>
                         <TableRow sx={{ background: '#085B6B' }}>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
-                            Eigenschaft
-                          </TableCell>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
-                            Wert
-                          </TableCell>
+                          <TableCell sx={tableCellStyle}>Eigenschaft</TableCell>
+                          <TableCell sx={tableCellStyle}>Wert</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         <TableRow>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
+                          <TableCell sx={tableCellStyle}>
                             Markierte Fläche
                           </TableCell>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
+                          <TableCell sx={tableCellStyle}>
                             {(panel.area * 0.092903).toFixed(2)} m²
                           </TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
+                          <TableCell sx={tableCellStyle}>
                             Solar Panels
                           </TableCell>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
+                          <TableCell sx={tableCellStyle}>
                             {(panel.area / solarPanelArea).toFixed(0)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
+                          <TableCell sx={tableCellStyle}>
                             Stromerzeugung pro Jahr
                           </TableCell>
-                          <TableCell
-                            sx={{
-                              ...tableCellStyle,
-                              fontSize: {
-                                xs: '0.75rem',
-                                sm: '0.875rem',
-                                md: '1rem',
-                              }, // Adjust font size for small screens
-                            }}
-                          >
+                          <TableCell sx={tableCellStyle}>
                             {(
                               (((panel.area / solarPanelArea) *
                                 solarPanelEnergyOutput *
@@ -575,28 +477,10 @@ export default function ConfigPage({
                         {panel.solarData ? (
                           <>
                             <TableRow>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 Sonnenstunden
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 {panel.solarData.maxSunshineHoursPerYear.toFixed(
                                   2
                                 )}{' '}
@@ -604,28 +488,10 @@ export default function ConfigPage({
                               </TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 Solarstrahlung
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 {(
                                   panel.solarData.maxSunshineHoursPerYear / 365
                                 ).toFixed(2)}{' '}
@@ -633,28 +499,10 @@ export default function ConfigPage({
                               </TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 Weniger Emissionen pro Jahr ggü. Strommix
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 {panel.solarData.carbonOffsetFactorKgPerMwh.toFixed(
                                   2
                                 )}{' '}
@@ -665,54 +513,18 @@ export default function ConfigPage({
                         ) : (
                           <>
                             <TableRow>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 Sonnenstunden
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 Wird geladen...
                               </TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 CO2-Einsparungen
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  ...tableCellStyle,
-                                  fontSize: {
-                                    xs: '0.75rem',
-                                    sm: '0.875rem',
-                                    md: '1rem',
-                                  }, // Adjust font size for small screens
-                                }}
-                              >
+                              <TableCell sx={tableCellStyle}>
                                 Wird geladen...
                               </TableCell>
                             </TableRow>
@@ -727,14 +539,7 @@ export default function ConfigPage({
                       color='error'
                       startIcon={<DeleteIcon />}
                       onClick={() => handleOpenModal(index)}
-                      sx={{
-                        mr: 1,
-                        fontSize: {
-                          xs: '0.875rem',
-                          sm: '1rem',
-                          md: '1.125rem',
-                        }, // Adjust font size for small screens
-                      }}
+                      sx={{ mr: 1 }}
                     >
                       Löschen
                     </Button>
@@ -743,13 +548,6 @@ export default function ConfigPage({
                       color='primary'
                       startIcon={<DownloadIcon />}
                       onClick={() => downloadPDF(index)}
-                      sx={{
-                        fontSize: {
-                          xs: '0.875rem',
-                          sm: '1rem',
-                          md: '1.125rem',
-                        }, // Adjust font size for small screens
-                      }}
                     >
                       PDF herunterladen
                     </Button>
@@ -770,88 +568,35 @@ export default function ConfigPage({
           mt: 2,
         }}
       >
-        <Typography
-          variant='h6'
-          sx={{
-            fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' }, // Adjust font size for small screens
-          }}
-        >
-          Zusammenfassung
-        </Typography>
+        <Typography variant='h6'>Zusammenfassung</Typography>
         <TableContainer component={Paper} sx={{ background: 'transparent' }}>
           <Table>
             <TableHead>
               <TableRow sx={{ background: '#085B6B' }}>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
-                  Eigenschaft
-                </TableCell>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
-                  Wert
-                </TableCell>
+                <TableCell sx={tableCellStyle}>Eigenschaft</TableCell>
+                <TableCell sx={tableCellStyle}>Wert</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
+                <TableCell sx={tableCellStyle}>
                   Gesamte markierte Fläche
                 </TableCell>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
+                <TableCell sx={tableCellStyle}>
                   {(getRoofArea() * 0.092903).toFixed(2)} m²
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
-                  Gesamte Panels
-                </TableCell>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
+                <TableCell sx={tableCellStyle}>Gesamte Panels</TableCell>
+                <TableCell sx={tableCellStyle}>
                   {(getRoofArea() / solarPanelArea).toFixed(0)}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
+                <TableCell sx={tableCellStyle}>
                   Jährliche Stromerzeugung
                 </TableCell>
-                <TableCell
-                  sx={{
-                    ...tableCellStyle,
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, // Adjust font size for small screens
-                  }}
-                >
+                <TableCell sx={tableCellStyle}>
                   {roofPanels
                     .reduce(
                       (total, panel) =>
@@ -887,7 +632,7 @@ export default function ConfigPage({
           variant='outlined'
           color='inherit'
           endIcon={<ArrowForwardIcon />}
-          onClick={() => {}}
+          onClick={handleNext}
           sx={{ color: '#E2CAA2', borderColor: '#E2CAA2', ml: 'auto' }}
         >
           Weiter

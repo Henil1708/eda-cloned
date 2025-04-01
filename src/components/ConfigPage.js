@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -18,14 +18,14 @@ import {
   Paper,
   Checkbox,
   FormControlLabel,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DownloadIcon from '@mui/icons-material/Download';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useNavigate } from 'react-router-dom';
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useNavigate } from "react-router-dom";
 
 export default function ConfigPage({
   roofPanels,
@@ -41,7 +41,7 @@ export default function ConfigPage({
   setCurrentPage,
   setMapMetaData,
 }) {
-  const [areaType, setLocalAreaType] = useState('Dachfläche');
+  const [areaType, setLocalAreaType] = useState("Dachfläche");
   const [selectedConcepts, setSelectedConcepts] = useState([]);
   const navigate = useNavigate();
 
@@ -51,17 +51,17 @@ export default function ConfigPage({
 
     let newAreaTypeEnglish;
     switch (newAreaTypeGerman) {
-      case 'Dachfläche':
-        newAreaTypeEnglish = 'Roof';
+      case "Dachfläche":
+        newAreaTypeEnglish = "Roof";
         break;
-      case 'Freifläche':
-        newAreaTypeEnglish = 'Open Area';
+      case "Freifläche":
+        newAreaTypeEnglish = "Open Area";
         break;
-      case 'Dach- und Freifläche':
-        newAreaTypeEnglish = 'Both';
+      case "Dach- und Freifläche":
+        newAreaTypeEnglish = "Both";
         break;
       default:
-        newAreaTypeEnglish = 'Roof';
+        newAreaTypeEnglish = "Roof";
     }
     setAreaType(newAreaTypeEnglish);
   };
@@ -75,296 +75,317 @@ export default function ConfigPage({
   };
 
   const handleBackToSearch = () => {
-    setLocalAreaType('Dachfläche');
-    setAreaType('Roof');
-    setCurrentPage('search');
+    setLocalAreaType("Dachfläche");
+    setAreaType("Roof");
+    setCurrentPage("search");
   };
 
   const handleNext = () => {
     setMapMetaData();
-    navigate('/page1');
+    navigate("/page1");
   };
 
-  const tableCellStyle = { color: '#E2CAA2', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }};
+  const tableCellStyle = {
+    color: "#E2CAA2",
+    fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
+  };
 
   return (
-    <Box sx={{ padding: 3, color: '#E2CAA2' }}>
+    <Box sx={{ padding: 3, color: "#E2CAA2" }}>
+      <img
+        src="assets/logo.png"
+        style={{
+          width: "fit-content",
+          height: "40px",
+          objectFit: "contain",
+          marginBottom: "40px",
+        }}
+      />
       <Typography
-        variant='h6'
-        fontWeight='bold'
+        variant="h6"
+        fontWeight="bold"
         sx={{
           mb: 1,
-          fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+          fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
         }}
       >
         SOLAR-KONFIGURATOR
       </Typography>
       <Typography
-        variant='h3'
-        fontWeight='bold'
+        variant="h3"
+        fontWeight="bold"
         sx={{
           mb: 1,
-          fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+          fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
         }}
       >
         Markieren Sie Ihre
         <br />
         Flächen
       </Typography>
-      <Typography variant='body2' sx={{
+      <Typography
+        variant="body2"
+        sx={{
           mb: 2,
-          fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
-        }}>
+          fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
+        }}
+      >
         Klicken Sie mit der Maus auf die Eckpunkte Ihrer Dach- oder Freifläche.
         Mit einem Klick auf den zuerst gesetzten Punkt, können Sie die Fläche
         abschließen. Alle Angaben können auch nachträglich verändert werden.
       </Typography>
-      <Typography variant='h6' sx={{
-          color: '#E2CAA2',
+      <Typography
+        variant="h6"
+        sx={{
+          color: "#E2CAA2",
           mt: 3,
           mb: 1,
-          fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
-        }}>
+          fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+        }}
+      >
         Flächenart :
       </Typography>
-      <FormControl sx={{ minWidth: '100%' }}>
+      <FormControl sx={{ minWidth: "100%" }}>
         <Select
           value={areaType}
           onChange={handleAreaTypeChange}
           sx={{
-            color: '#E2CAA2',
-            backgroundColor: '#085B6B',
-            fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+            color: "#E2CAA2",
+            backgroundColor: "#085B6B",
+            fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
           }}
         >
-          <MenuItem value='Dachfläche'>Dachfläche</MenuItem>
-          <MenuItem value='Freifläche'>Freifläche</MenuItem>
-          <MenuItem value='Dach- und Freifläche'>Dach- und Freifläche</MenuItem>
+          <MenuItem value="Dachfläche">Dachfläche</MenuItem>
+          <MenuItem value="Freifläche">Freifläche</MenuItem>
+          <MenuItem value="Dach- und Freifläche">Dach- und Freifläche</MenuItem>
         </Select>
       </FormControl>
-      <Typography variant='h6' sx={{
-          color: '#E2CAA2',
+      <Typography
+        variant="h6"
+        sx={{
+          color: "#E2CAA2",
           mt: 3,
           mb: 1,
-          fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
-        }}>
+          fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+        }}
+      >
         An welchen Konzepten sind Sie interessiert?*
       </Typography>
       <Box>
-        {areaType === 'Dachfläche' && (
+        {areaType === "Dachfläche" && (
           <>
             <FormControlLabel
               control={
                 <Checkbox
                   checked={selectedConcepts.includes(
-                    'Schlüsselfertige Eigenanlage (Dach)'
+                    "Schlüsselfertige Eigenanlage (Dach)"
                   )}
                   onChange={() =>
-                    handleConceptChange('Schlüsselfertige Eigenanlage (Dach)')
+                    handleConceptChange("Schlüsselfertige Eigenanlage (Dach)")
                   }
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
                   }}
                 />
               }
-              label='Schlüsselfertige Eigenanlage (Dach)'
-              sx={{ color: '#E2CAA2' }}
+              label="Schlüsselfertige Eigenanlage (Dach)"
+              sx={{ color: "#E2CAA2" }}
             />
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={selectedConcepts.includes('Dachvermietung')}
-                  onChange={() => handleConceptChange('Dachvermietung')}
+                  checked={selectedConcepts.includes("Dachvermietung")}
+                  onChange={() => handleConceptChange("Dachvermietung")}
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
                   }}
                 />
               }
-              label='Dachvermietung'
+              label="Dachvermietung"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
               }}
             />
             <FormControlLabel
               control={
                 <Checkbox
                   checked={selectedConcepts.includes(
-                    'Solaranlage mieten (Dach)'
+                    "Solaranlage mieten (Dach)"
                   )}
                   onChange={() =>
-                    handleConceptChange('Solaranlage mieten (Dach)')
+                    handleConceptChange("Solaranlage mieten (Dach)")
                   }
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
                   }}
                 />
               }
-              label='Solaranlage mieten (Dach)'
+              label="Solaranlage mieten (Dach)"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
               }}
             />
           </>
         )}
 
-        {areaType === 'Freifläche' && (
+        {areaType === "Freifläche" && (
           <>
             <FormControlLabel
               control={
                 <Checkbox
                   checked={selectedConcepts.includes(
-                    'Schlüsselfertige Eigenanlage (Freifläche)'
+                    "Schlüsselfertige Eigenanlage (Freifläche)"
                   )}
                   onChange={() =>
                     handleConceptChange(
-                      'Schlüsselfertige Eigenanlage (Freifläche)'
+                      "Schlüsselfertige Eigenanlage (Freifläche)"
                     )
                   }
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
                   }}
                 />
               }
-              label='Schlüsselfertige Eigenanlage (Freifläche)'
+              label="Schlüsselfertige Eigenanlage (Freifläche)"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
               }}
             />
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={selectedConcepts.includes('Freiflächen vermieten')}
-                  onChange={() => handleConceptChange('Freiflächen vermieten')}
+                  checked={selectedConcepts.includes("Freiflächen vermieten")}
+                  onChange={() => handleConceptChange("Freiflächen vermieten")}
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
                   }}
                 />
               }
-              label='Freiflächen vermieten'
+              label="Freiflächen vermieten"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" },
               }}
             />
           </>
         )}
 
-        {areaType === 'Dach- und Freifläche' && (
+        {areaType === "Dach- und Freifläche" && (
           <>
             <FormControlLabel
               control={
                 <Checkbox
                   checked={selectedConcepts.includes(
-                    'Schlüsselfertige Eigenanlage (Dach)'
+                    "Schlüsselfertige Eigenanlage (Dach)"
                   )}
                   onChange={() =>
-                    handleConceptChange('Schlüsselfertige Eigenanlage (Dach)')
+                    handleConceptChange("Schlüsselfertige Eigenanlage (Dach)")
                   }
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
                   }}
                 />
               }
-              label='Schlüsselfertige Eigenanlage (Dach)'
+              label="Schlüsselfertige Eigenanlage (Dach)"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
               }}
             />
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={selectedConcepts.includes('Dachvermietung')}
-                  onChange={() => handleConceptChange('Dachvermietung')}
+                  checked={selectedConcepts.includes("Dachvermietung")}
+                  onChange={() => handleConceptChange("Dachvermietung")}
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
                   }}
                 />
               }
-              label='Dachvermietung'
+              label="Dachvermietung"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
               }}
             />
             <FormControlLabel
               control={
                 <Checkbox
                   checked={selectedConcepts.includes(
-                    'Solaranlage mieten (Dach)'
+                    "Solaranlage mieten (Dach)"
                   )}
                   onChange={() =>
-                    handleConceptChange('Solaranlage mieten (Dach)')
+                    handleConceptChange("Solaranlage mieten (Dach)")
                   }
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
                   }}
                 />
               }
-              label='Solaranlage mieten (Dach)'
+              label="Solaranlage mieten (Dach)"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
               }}
             />
             <FormControlLabel
               control={
                 <Checkbox
                   checked={selectedConcepts.includes(
-                    'Schlüsselfertige Eigenanlage (Freifläche)'
+                    "Schlüsselfertige Eigenanlage (Freifläche)"
                   )}
                   onChange={() =>
                     handleConceptChange(
-                      'Schlüsselfertige Eigenanlage (Freifläche)'
+                      "Schlüsselfertige Eigenanlage (Freifläche)"
                     )
                   }
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
                   }}
                 />
               }
-              label='Schlüsselfertige Eigenanlage (Freifläche)'
+              label="Schlüsselfertige Eigenanlage (Freifläche)"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
               }}
             />
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={selectedConcepts.includes('Freiflächen vermieten')}
-                  onChange={() => handleConceptChange('Freiflächen vermieten')}
+                  checked={selectedConcepts.includes("Freiflächen vermieten")}
+                  onChange={() => handleConceptChange("Freiflächen vermieten")}
                   sx={{
-                    color: '#E2CAA2',
-                    '&.Mui-checked': { color: '#E2CAA2' },
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                    color: "#E2CAA2",
+                    "&.Mui-checked": { color: "#E2CAA2" },
+                    fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
                   }}
                 />
               }
-              label='Freiflächen vermieten'
+              label="Freiflächen vermieten"
               sx={{
-                color: '#E2CAA2',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+                color: "#E2CAA2",
+                fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
               }}
             />
           </>
@@ -372,7 +393,7 @@ export default function ConfigPage({
       </Box>
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #073845 10%, #085B6B 100%)',
+          background: "linear-gradient(135deg, #073845 10%, #085B6B 100%)",
           padding: 2,
           borderRadius: 1,
           boxShadow: 2,
@@ -381,39 +402,44 @@ export default function ConfigPage({
       >
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             mb: 2,
           }}
         >
-          <Typography variant='h6'  sx={{
-              fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' }, // Adjust font size for small screens
-            }}>Ihre markierte Flächen</Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" }, // Adjust font size for small screens
+            }}
+          >
+            Ihre markierte Flächen
+          </Typography>
           <Button
-            variant='outlined'
-            color='inherit'
+            variant="outlined"
+            color="inherit"
             startIcon={<AddIcon />}
             onClick={handleToggleDrawing}
             disabled={isDrawingEnabled}
             sx={{
-              color: '#E2CAA2',
-              borderColor: '#E2CAA2',
-              fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }, // Adjust font size for small screens
+              color: "#E2CAA2",
+              borderColor: "#E2CAA2",
+              fontSize: { xs: "0.875rem", sm: "1rem", md: "1.125rem" }, // Adjust font size for small screens
             }}
           >
             Neue Fläche hinzufügen
           </Button>
         </Box>
-        <Typography variant='body2' sx={{ color: '#E2CAA2', mb: 2 }}>
-          {areaType === 'Dachfläche' &&
-            'Zeichnen Sie Polygone über die süd-, ost- und westlichen Abschnitte Ihres Daches.'}
-          {areaType === 'Freifläche' &&
-            'Zeichnen Sie Polygone über offene grüne Felder und Flächen.'}
-          {areaType === 'Dach- und Freifläche' &&
-            'Zeichnen Sie Polygone über Dachabschnitte und offene Flächen.'}
+        <Typography variant="body2" sx={{ color: "#E2CAA2", mb: 2 }}>
+          {areaType === "Dachfläche" &&
+            "Zeichnen Sie Polygone über die süd-, ost- und westlichen Abschnitte Ihres Daches."}
+          {areaType === "Freifläche" &&
+            "Zeichnen Sie Polygone über offene grüne Felder und Flächen."}
+          {areaType === "Dach- und Freifläche" &&
+            "Zeichnen Sie Polygone über Dachabschnitte und offene Flächen."}
           {isDrawingEnabled &&
-            ' Klicken Sie auf die Karte, um ein neues Panel zu zeichnen.'}
+            " Klicken Sie auf die Karte, um ein neues Panel zu zeichnen."}
         </Typography>
 
         {roofPanels.map(
@@ -421,23 +447,28 @@ export default function ConfigPage({
             !panel.isDeleted && (
               <Accordion
                 key={index}
-                sx={{ background: '#0D5E6B', color: '#E2CAA2', mb: 1 }}
+                sx={{ background: "#0D5E6B", color: "#E2CAA2", mb: 1 }}
               >
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: '#E2CAA2' }} />}
+                  expandIcon={<ExpandMoreIcon sx={{ color: "#E2CAA2" }} />}
                 >
-                  <Typography fontWeight='bold' sx={{
-                      fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' }, // Adjust font size for small screens
-                    }}>Panel {index + 1}</Typography>
+                  <Typography
+                    fontWeight="bold"
+                    sx={{
+                      fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" }, // Adjust font size for small screens
+                    }}
+                  >
+                    Panel {index + 1}
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <TableContainer
                     component={Paper}
-                    sx={{ background: 'transparent' }}
+                    sx={{ background: "transparent" }}
                   >
                     <Table sx={{ minWidth: 250 }}>
                       <TableHead>
-                        <TableRow sx={{ background: '#085B6B' }}>
+                        <TableRow sx={{ background: "#085B6B" }}>
                           <TableCell sx={tableCellStyle}>Eigenschaft</TableCell>
                           <TableCell sx={tableCellStyle}>Wert</TableCell>
                         </TableRow>
@@ -470,7 +501,7 @@ export default function ConfigPage({
                                 12) /
                                 energyConsumption) *
                               100
-                            ).toFixed(2)}{' '}
+                            ).toFixed(2)}{" "}
                             kWh/Jahr
                           </TableCell>
                         </TableRow>
@@ -483,7 +514,7 @@ export default function ConfigPage({
                               <TableCell sx={tableCellStyle}>
                                 {panel.solarData.maxSunshineHoursPerYear.toFixed(
                                   2
-                                )}{' '}
+                                )}{" "}
                                 Stunden
                               </TableCell>
                             </TableRow>
@@ -494,7 +525,7 @@ export default function ConfigPage({
                               <TableCell sx={tableCellStyle}>
                                 {(
                                   panel.solarData.maxSunshineHoursPerYear / 365
-                                ).toFixed(2)}{' '}
+                                ).toFixed(2)}{" "}
                                 kWh/m²/Tag
                               </TableCell>
                             </TableRow>
@@ -505,7 +536,7 @@ export default function ConfigPage({
                               <TableCell sx={tableCellStyle}>
                                 {panel.solarData.carbonOffsetFactorKgPerMwh.toFixed(
                                   2
-                                )}{' '}
+                                )}{" "}
                                 Kg CO₂/Jahr
                               </TableCell>
                             </TableRow>
@@ -535,8 +566,8 @@ export default function ConfigPage({
                   </TableContainer>
                   <Box sx={{ mt: 2 }}>
                     <Button
-                      variant='contained'
-                      color='error'
+                      variant="contained"
+                      color="error"
                       startIcon={<DeleteIcon />}
                       onClick={() => handleOpenModal(index)}
                       sx={{ mr: 1 }}
@@ -544,8 +575,8 @@ export default function ConfigPage({
                       Löschen
                     </Button>
                     <Button
-                      variant='contained'
-                      color='primary'
+                      variant="contained"
+                      color="primary"
                       startIcon={<DownloadIcon />}
                       onClick={() => downloadPDF(index)}
                     >
@@ -561,18 +592,18 @@ export default function ConfigPage({
       {/* Summary Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #073845 10%, #085B6B 100%)',
+          background: "linear-gradient(135deg, #073845 10%, #085B6B 100%)",
           padding: 2,
           borderRadius: 1,
           boxShadow: 2,
           mt: 2,
         }}
       >
-        <Typography variant='h6'>Zusammenfassung</Typography>
-        <TableContainer component={Paper} sx={{ background: 'transparent' }}>
+        <Typography variant="h6">Zusammenfassung</Typography>
+        <TableContainer component={Paper} sx={{ background: "transparent" }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ background: '#085B6B' }}>
+              <TableRow sx={{ background: "#085B6B" }}>
                 <TableCell sx={tableCellStyle}>Eigenschaft</TableCell>
                 <TableCell sx={tableCellStyle}>Wert</TableCell>
               </TableRow>
@@ -610,7 +641,7 @@ export default function ConfigPage({
                           : total,
                       0
                     )
-                    .toFixed(2)}{' '}
+                    .toFixed(2)}{" "}
                   kWh/Jahr
                 </TableCell>
               </TableRow>
@@ -618,22 +649,22 @@ export default function ConfigPage({
           </Table>
         </TableContainer>
       </Box>
-      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+      <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
         <Button
-          variant='outlined'
-          color='inherit'
+          variant="outlined"
+          color="inherit"
           startIcon={<ArrowBackIcon />}
           onClick={handleBackToSearch}
-          sx={{ color: '#E2CAA2', borderColor: '#E2CAA2' }}
+          sx={{ color: "#E2CAA2", borderColor: "#E2CAA2" }}
         >
-          Zurück zur Suche
+          Zurück
         </Button>
         <Button
-          variant='outlined'
-          color='inherit'
+          variant="outlined"
+          color="inherit"
           endIcon={<ArrowForwardIcon />}
           onClick={handleNext}
-          sx={{ color: '#E2CAA2', borderColor: '#E2CAA2', ml: 'auto' }}
+          sx={{ color: "#E2CAA2", borderColor: "#E2CAA2", ml: "auto" }}
         >
           Weiter
         </Button>

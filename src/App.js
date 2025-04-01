@@ -75,6 +75,35 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<Map />} />
+
+        <Route path="*" element={<PagesLayout />} />
+      </Routes>
+    </div>
+  );
+}
+
+const PagesLayout = () => {
+  return (
+    <div>
+      <div
+        style={{
+          display: "flex",
+          // justifyContent: "space-between",
+          // alignItems: "center",
+          padding: "40px",
+          paddingBottom: "20px",
+        }}
+      >
+        <img
+          src="assets/logo.png"
+          style={{
+            width: "fit-content",
+            height: "40px",
+            objectFit: "contain",
+          }}
+        />
+      </div>
+      <Routes>
         <Route path="/page1" element={<Page1 />} />
         <Route path="/page2" element={<Page2 />} />
         <Route path="/page3" element={<Page3 />} />
@@ -90,6 +119,6 @@ function App() {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;

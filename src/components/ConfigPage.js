@@ -166,7 +166,7 @@ export default function ConfigPage({
           color: "#E2CAA2",
           mt: 3,
           mb: 1,
-          fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+          fontSize: { xs: "0.90rem", sm: "1rem", md: "1.3rem" },
         }}
       >
         An welchen Konzepten sind Sie interessiert?*

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import PaginationButtons from "../common/PaginationButtons";
 import { selectFormData } from "../slice/formSlice";
-import { Container, Row, Col, Image } from "react-bootstrap";
+import { Container, Row, Col, Image as ImageBootstrap } from "react-bootstrap";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import {
@@ -180,26 +180,44 @@ const Page11 = () => {
     // Create a new PDF instance with portrait orientation and A4 size.
     const pdf = new jsPDF("p", "pt", "a4");
     const margin = 20;
-    let yLeft = margin; // Starting y for the left column
-    let yRight = margin; // Starting y for the right column
-    const leftX = margin;
-    const rightX = 300; // Adjust as needed for your layout
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    let y = margin;
+
+    // HEADER
+    pdf.setFontSize(18);
+    pdf.setFont("helvetica", "bold");
+    // Center the header text
+    pdf.text("So zahlt sich eine Solaranlage für Sie aus", pageWidth / 2, y, {
+      align: "center",
+    });
+    y += 30;
+    // Add a horizontal line under the header
+    pdf.setLineWidth(1);
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 20;
+
+    // BODY TEXT (wrapped if needed)
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    const bodyText =
+      "Durch Eigenverbrauch und Einspeisevergütung können Sie mit einer Solaranlage Ihre Energiekosten jährlich um 813 Euro senken. Wenn Sie zusätzlich einen Batteriespeicher integrieren, beträgt der Wert sogar 1.193 Euro.";
+    const splitBodyText = pdf.splitTextToSize(bodyText, pageWidth - 2 * margin);
+    pdf.text(splitBodyText, margin, y);
+    y += splitBodyText.length * 14 + 10; // update y based on text height
 
     // LEFT COLUMN DETAILS
-    pdf.setFontSize(12);
+    const leftX = margin;
+    let yLeft = y;
     pdf.text(`Standort: 53343`, leftX, yLeft);
     yLeft += 20;
-
     pdf.text(`Haustyp: ${formData.selectedHouseType}`, leftX, yLeft);
     yLeft += 20;
-
     pdf.text(
       `Energieverbrauch: ${formData.totalConsumption} kWh/Jahr`,
       leftX,
       yLeft
     );
     yLeft += 20;
-
     pdf.text(`Nutzungsprofil: ${formData.timeOfUse}`, leftX, yLeft);
     yLeft += 20;
 
@@ -217,11 +235,13 @@ const Page11 = () => {
         : "Kein Verbraucher";
     pdf.text(`Zusätzliche Verbraucher: ${additionalConsumers}`, leftX, yLeft);
     yLeft += 20;
-
-    pdf.text(`Dachfläche: 180 m2`, leftX, yLeft);
+    pdf.text(`Dachfläche: 180 m²`, leftX, yLeft);
     yLeft += 20;
 
     // RIGHT COLUMN DETAILS
+    // We position these on the right half of the page.
+    const rightX = pageWidth / 2 + margin;
+    let yRight = y;
     pdf.text(
       `Gesamte markierte Fläche: ${(formData.roofArea * 0.092903).toFixed(
         2
@@ -230,24 +250,21 @@ const Page11 = () => {
       yRight
     );
     yRight += 20;
-
     pdf.text(`Dachart: ${formData.roofType}`, rightX, yRight);
     yRight += 20;
-
     pdf.text(`Neigungswinkel: ${formData.roofPitchAngle}`, rightX, yRight);
     yRight += 20;
-
     pdf.text(`Dachmaterial: ${formData.roofMaterial}`, rightX, yRight);
     yRight += 20;
-
     pdf.text(`Ausrichtung: Nord`, rightX, yRight);
     yRight += 20;
-
     pdf.text(`Solarpanel: ${formData.solarPanelOption}`, rightX, yRight);
     yRight += 20;
-
     pdf.text(`Installationszeit: ${formData.installationTime}`, rightX, yRight);
     yRight += 20;
+
+    // Update overall y coordinate to be below the taller of the two columns
+    y = Math.max(yLeft, yRight) + 20;
 
     // IMAGE ADDITION
     // Determine the image source based on roofType.
@@ -264,18 +281,13 @@ const Page11 = () => {
 
     // Load the image and add it to the PDF
     getBase64Image(roofImageSrc, (base64Image) => {
-      // Define image dimensions
       const imageWidth = 150; // desired width in points
       const imageHeight = 150; // desired height in points
-
-      // Get page width to center the image horizontally
-      const pageWidth = pdf.internal.pageSize.getWidth();
+      // Center the image horizontally
       const imageX = (pageWidth - imageWidth) / 2;
-      // Use yLeft + 20 as the y position (adjust as needed)
-      const imageY = yLeft + 20;
+      const imageY = y + 20; // add some spacing before the image
 
       pdf.addImage(base64Image, "PNG", imageX, imageY, imageWidth, imageHeight);
-
       // Finally, save the PDF
       pdf.save("details.pdf");
     });
@@ -311,12 +323,12 @@ const Page11 = () => {
           <div className="d-flex flex-column align-items-start">
             <div className="text-start">
               <p className="text-white mb-0">53343</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark " />
               <p className="text-white fw-bold">Standort</p>
             </div>
             <div className="text-start">
               <p className="text-white mb-0">{formData.selectedHouseType}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* House type */}
               <p className="text-white fw-bold">Haustyp</p>
             </div>
@@ -324,13 +336,13 @@ const Page11 = () => {
               <p className="text-white mb-0">
                 {formData.totalConsumption} kWh/Jahr
               </p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Energy consumption */}
               <p className="text-white fw-bold">Energieverbrauch</p>
             </div>
             <div className="text-start">
               <p className="text-white mb-0">{formData.timeOfUse}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Usage profile */}
               <p className="text-white fw-bold">Nutzungsprofil</p>
             </div>
@@ -348,13 +360,13 @@ const Page11 = () => {
                   ? "Ladestation"
                   : "Kein Verbraucher"}
               </p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Additional consumers */}
               <p className="text-white fw-bold">Zusätzliche Verbraucher</p>
             </div>
             <div className="text-start">
               <p className="text-white mb-0">180 m2</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Roof area */}
               <p className="text-white fw-bold">Dachfläche</p>
             </div>
@@ -382,41 +394,41 @@ const Page11 = () => {
               <p className="text-white mb-0">
                 {(formData.roofArea * 0.092903).toFixed(2)} m²
               </p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Roof type */}
               <p className="text-white fw-bold">Gesamte markierte Fläche</p>
             </div>
             <div className="text-end">
               <p className="text-white mb-0">{formData.roofType}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Roof type */}
               <p className="text-white fw-bold">Dachart</p>
             </div>
             <div className="text-end">
               <p className="text-white mb-0">{formData.roofPitchAngle}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Angle of inclination */}
               <p className="text-white fw-bold">Neigungswinkal</p>
             </div>
             <div className="text-end">
               <p className="text-white mb-0">{formData.roofMaterial}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               {/* Roof material */}
               <p className="text-white fw-bold">Dachmaterial</p>
             </div>
             <div className="text-end">
               <p className="text-white mb-0">Nord</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               <p className="text-white fw-bold">Ausrichtung</p>
             </div>
             <div className="text-end">
               <p className="text-white mb-0">{formData.solarPanelOption}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               <p className="text-white fw-bold">Solarpanel</p>
             </div>
             <div className="text-end">
               <p className="text-white mb-0">{formData.installationTime}</p>
-              {/* <hr className="my-1 text-bg-dark" /> */}
+              <hr className="my-1 text-bg-dark" />
               <p className="text-white fw-bold">Installationszeit</p>
             </div>
           </div>
@@ -431,7 +443,7 @@ const Page11 = () => {
             md={5}
             className="d-flex justify-content-center order-1 order-md-2 mb-5"
           >
-            <Image
+            <ImageBootstrap
               className="page-11-img"
               src={
                 formData.roofType === "Flachdatch"

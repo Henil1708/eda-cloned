@@ -25,9 +25,12 @@ const PaginationButtons = ({
       }}
     >
       <Link
-        className={`btn text-decoration-none border-0 px-4 py-2 me-3 ${
-          !isPrevEnabled ? "btn-secondary disabled" : "btn-success"
-        }`}
+        className={`btn text-decoration-none border-0 px-4 py-2 ${
+          (currentPage < totalPages || currentPage === totalPages - 1) &&
+          currentPage !== totalPages
+            ? "me-3"
+            : ""
+        } ${!isPrevEnabled ? "btn-secondary disabled" : "btn-success"}`}
         to={
           isPrevEnabled
             ? currentPage <= 1
@@ -39,7 +42,7 @@ const PaginationButtons = ({
         Zurück
       </Link>
 
-      {currentPage === totalPages - 1 || currentPage === totalPages ? (
+      {currentPage === totalPages - 1 && currentPage !== totalPages && (
         <Link
           className={`btn text-decoration-none border-0 px-4 py-2 ${
             !isNextEnabled ? "btn-secondary disabled" : "btn-success"
@@ -49,7 +52,8 @@ const PaginationButtons = ({
         >
           Submit
         </Link>
-      ) : (
+      )}
+      {currentPage !== totalPages - 1 && currentPage !== totalPages && (
         <Link
           className={`btn text-decoration-none border-0 px-4 py-2 ${
             !isNextEnabled ? "btn-secondary disabled" : "btn-success"
